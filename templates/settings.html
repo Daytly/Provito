@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-Пользователь
-{{user.name}}
-{{user.about}}
-{{user.email}}
 <a class="btn btn-success" href="/">Вернуться</a>
+<h1>Начтройки</h1>
+<h2>Имя пользователя: {{user.name}}</h2>
+<h2>Информация о пользователе: {{user.about}}</h2>
+<h2>Почта: {{user.email}}</h2>
 <a class="btn btn-success" href="/logout">Выйти</a>
+<a class="btn btn-success" href="/settings/edit">Изменить</a>
 {% endblock %}

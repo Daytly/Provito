@@ -146,8 +146,7 @@ def edit_news(id):
             abort(404)
     return render_template('news.html',
                            title='Редактирование новости',
-                           form=form
-                           )
+                           form=form)
 
 
 @app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
@@ -175,8 +174,43 @@ def logout():
 def settings():
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == current_user.id).first()
-    print(user.news)
     return render_template('settings.html', user=user)
+
+
+@app.route('/settings/edit', methods=['GET', 'POST'])
+def edit_user():
+    form = RegisterForm()
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.id == current_user.id,).first()
+        if user:
+            form.email.data = user.email
+            form.name.data = user.name
+            form.about.data = user.about
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.id == current_user.id,).first()
+        if form.password.data != form.password_again.data:
+            return render_template('register.html', title='Регистрация', form=form,
+                                   message="Пароли не совпадают")
+        user1 = db_sess.query(User).filter(User.email == form.email.data).first()
+        if user1.id != current_user.id:
+            return render_template('register.html', title='Регистрация', form=form,
+                                   message="Такой пользователь уже есть")
+        if user:
+            user.email = form.email.data
+            user.set_password(form.password.data)
+            user.name = form.name.data
+            user.about = form.about.data
+            db_sess.commit()
+            return redirect('/')
+        else:
+            abort(404)
+    return render_template('register.html',
+                           title='Редактирование профиля',
+                           form=form)
 
 
 @app.errorhandler(404)
