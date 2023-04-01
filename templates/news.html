@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1>Добавление новости</h1>
-<form action="" method="post">
+<form action="" method="post" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     <p>
         {{ form.title.label }}<br>
@@ -21,6 +21,16 @@
                 {{ error }}
             </p>
         {% endfor %}
+    </p>
+    <p>
+        {{ form.photo.label }}<br>
+        {{ form.photo }}<br>
+        {% for error in form.photo.errors %}
+            <p content="alert alert-danger" role="alert">
+                <b style="color:red;">{{ error }}</b>
+            </p>
+        {% endfor %}
+    <br>
     </p>
     <p>{{ form.is_private() }} {{ form.is_private.label }}</p>
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>

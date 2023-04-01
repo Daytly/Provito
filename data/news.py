@@ -20,3 +20,4 @@ class News(SqlAlchemyBase, SerializerMixin):
     categories = orm.relationship("Category",
                                   secondary="association",
                                   backref="news")
+    file = sqlalchemy.Column(sqlalchemy.String)
