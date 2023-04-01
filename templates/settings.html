@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+Пользователь
+{{user.name}}
+{{user.about}}
+{{user.email}}
+<a class="btn btn-success" href="/">Вернуться</a>
+<a class="btn btn-success" href="/logout">Выйти</a>
+{% endblock %}
