@@ -171,6 +171,14 @@ def logout():
     return redirect("/")
 
 
+@app.route('/settings')
+def settings():
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == current_user.id).first()
+    print(user.news)
+    return render_template('settings.html', user=user)
+
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
