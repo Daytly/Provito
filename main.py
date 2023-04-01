@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, session, make_response, request, abort, jsonify
+from flask import Flask, render_template, redirect, session, make_response, request, abort, jsonify, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_restful import Api
 from forms.user import RegisterForm, LoginForm
@@ -33,7 +33,7 @@ def index():
             (News.user == current_user) | (News.is_private!=True))
     else:
         news = db_sess.query(News).filter(News.is_private!=True)
-    return render_template("index.html", news=news)
+    return render_template("index.html", news=news, url_for=url_for)
 
 
 @app.route("/confirmation")
@@ -157,7 +157,8 @@ def news_delete(id):
                                       News.user == current_user
                                       ).first()
     if news:
-        return redirect('/confirmation')
+        db_sess.delete(news)
+        db_sess.commit()
     else:
         abort(404)
     return redirect('/')

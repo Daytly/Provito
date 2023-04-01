@@ -4,7 +4,7 @@
 <h1>Предложения обмена</h1>
 {% for item in news%}
 <div class="col-md6 border rounded">
-    <img src="https://github.com/Daytly/Provito/blob/c3c318a64f828f8dea310aa352be49eb4ce96e5d/UsersImages/test/main.jpeg" alt="В этом виноват Рома">
+    <img src="{{url_for('static', filename='img/img.png')}}" alt="В этом виноват Рома" width="350" height="350">
     <h2>{{item.title}}</h2>
     <div>
         {{item.content}}
