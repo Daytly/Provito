@@ -37,6 +37,16 @@ def index():
     return render_template("index.html", news=news)
 
 
+@app.route("/confirmation")
+def confirmation(id):
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(News.id == id,
+                                      News.user == current_user
+                                      ).first()
+    db_sess.delete(news)
+    db_sess.commit()
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     form = RegisterForm()
@@ -149,8 +159,7 @@ def news_delete(id):
                                       News.user == current_user
                                       ).first()
     if news:
-        db_sess.delete(news)
-        db_sess.commit()
+        return redirect('/confirmation')
     else:
         abort(404)
     return redirect('/')
