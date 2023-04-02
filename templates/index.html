@@ -5,7 +5,14 @@
     {{ form.hidden_tag() }}
     <p>
         {{ form.label.label }}
-        <br>{{ form.label(class="form-control") }}{{form.submit(type="submit", class="btn btn-primary")}}<br>
+        <div class="row">
+            <div class="col-9" style="padding: 4px; border:2px">
+                {{ form.label(class="form-control") }}
+            </div>
+            <div class="col-2" style="padding: 4px; border:2px">
+                {{form.submit(type="submit", class="btn btn-primary")}}
+            </div>
+        </div>
         {% for error in form.label.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
