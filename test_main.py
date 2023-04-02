@@ -237,8 +237,11 @@ def bad_request(_):
 
 
 def new_user(user):
-    os.mkdir('static/users_data/' + user.email)
-    os.mkdir('static/users_data/' + user.email + '/files')
+    try:
+        os.mkdir('static/users_data/' + user.email)
+        os.mkdir('static/users_data/' + user.email + '/files')
+    except FileExistsError:
+        pass
 
 
 if __name__ == '__main__':
