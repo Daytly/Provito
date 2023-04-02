@@ -3,25 +3,29 @@
 {% block content %}
 <h1>Предложения обмена</h1>
 {% for item in news%}
-<div class="col-md6 border rounded">
-    <img src="{{url_for('static', filename=item.file)}}" alt="В этом виноват Рома" width="350" height="350">
-    <h2>{{item.title}}</h2>
-    <div>
-        {{item.content}}
+<div class="col-md6 border rounded" style="padding:2px; margin:3px">
+    <div class="row">
+        <div class="col-2">
+            <img src="{{url_for('static', filename=item.file)}}" alt="В этом виноват Рома" class="w-100 h-100">
+        </div>
+        <div class="col-10">
+            <h2>{{item.title}}</h2>
+            <div>
+                {{item.content}}
+            </div>
+            Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+            {% if current_user.is_authenticated and current_user == item.user %}
+            <div>
+                <a href="/news/{{ item.id }}" class="btn btn-warning">
+                    Изменить
+                </a>
+                <a href="/news_delete/{{ item.id }}" class="btn btn-danger">
+                    Удалить
+                </a>
+            </div>
+            {% endif %}
+        </div>
     </div>
-    <div>
-        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
-    </div>
-    {% if current_user.is_authenticated and current_user == item.user %}
-    <div>
-        <a href="/news/{{ item.id }}" class="btn btn-warning">
-            Изменить
-        </a>
-        <a href="/news_delete/{{ item.id }}" class="btn btn-danger">
-            Удалить
-        </a>
-    </div>
-{% endif %}
 </div>
 {% endfor %}
     {% if current_user.is_authenticated %}

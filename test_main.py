@@ -73,14 +73,6 @@ def reqister():
     return render_template('register.html', title='Регистрация', form=form)
 
 
-@app.route("/session_test")
-def session_test():
-    visits_count = session.get('visits_count', 0)
-    session['visits_count'] = visits_count + 1
-    return make_response(
-        f"Вы пришли на эту страницу {visits_count + 1} раз")
-
-
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
@@ -141,6 +133,7 @@ def edit_news(id):
             form.title.data = news.title
             form.content.data = news.content
             form.is_private.data = news.is_private
+            form.photo.data = news.file
         else:
             abort(404)
     if form.validate_on_submit():
@@ -152,6 +145,14 @@ def edit_news(id):
             news.title = form.title.data
             news.content = form.content.data
             news.is_private = form.is_private.data
+            file = form.photo.data
+            if file:
+                filename = werkzeug.utils.secure_filename(file.filename)
+                path = f'static/users_data/{current_user.email}/files/{filename}'
+                file.save(path)
+                news.file = f'users_data/{current_user.email}/files/{filename}'
+            else:
+                news.file = 'img/img.png'
             db_sess.commit()
             return redirect('/')
         else:
