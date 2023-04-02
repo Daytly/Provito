@@ -1,5 +1,3 @@
-import os
-
 from flask import Flask, render_template, redirect, session, make_response, request, abort, jsonify, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_restful import Api
@@ -32,9 +30,9 @@ def index():
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
         news = db_sess.query(News).filter(
-            (News.user == current_user) | (News.is_private != True))
+            (News.user == current_user) | (News.is_private!=True))
     else:
-        news = db_sess.query(News).filter(News.is_private != True)
+        news = db_sess.query(News).filter(News.is_private!=True)
     return render_template("index.html", news=news, url_for=url_for)
 
 
@@ -100,7 +98,7 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
-@app.route('/news', methods=['GET', 'POST'])
+@app.route('/news',  methods=['GET', 'POST'])
 @login_required
 def add_news():
     form = NewsForm()
@@ -185,7 +183,7 @@ def edit_user():
     form = RegisterForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(User.id == current_user.id, ).first()
+        user = db_sess.query(User).filter(User.id == current_user.id,).first()
         if user:
             form.email.data = user.email
             form.name.data = user.name
@@ -194,7 +192,7 @@ def edit_user():
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(User.id == current_user.id, ).first()
+        user = db_sess.query(User).filter(User.id == current_user.id,).first()
         if form.password.data != form.password_again.data:
             return render_template('register.html', title='Регистрация', form=form,
                                    message="Пароли не совпадают")
