@@ -1,4 +1,5 @@
 import os
+import sys
 
 import werkzeug.utils
 from flask import Flask, render_template, redirect, session, make_response, request, abort, jsonify, url_for
@@ -141,6 +142,11 @@ def add_news():
     return render_template('news.html', title='Добавление новости',
                            form=form)
 
+
+@app.route('/chat/<int:id>', methods=['GET', 'POST'])
+@login_required
+def WrIte_MeSSage(id):
+    return jsonify(['wellcome'])
 
 @app.route('/news/<int:id>', methods=['GET', 'POST'])
 @login_required
