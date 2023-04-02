@@ -7,14 +7,16 @@
         {{ form.label.label }}
         <br>{{ form.label(class="form-control") }}{{form.submit(type="submit", class="btn btn-primary")}}<br>
         {% for error in form.label.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
+    <p class="alert alert-danger" role="alert">
+        {{ error }}
+    </p>
+    {% endfor %}
     </p>
 </form>
 <h1>Предложения обмена</h1>
 {% for item in news%}
+{% if search %}
+{% if search in item.title%}
 <div class="col-md6 border rounded" style="padding:2px; margin:3px">
     <div class="row">
         <div class="col-2">
@@ -39,8 +41,35 @@
         </div>
     </div>
 </div>
+{% endif %}
+{% else %}
+<div class="col-md6 border rounded" style="padding:2px; margin:3px">
+    <div class="row">
+        <div class="col-2">
+            <img src="{{url_for('static', filename=item.file)}}" alt="В этом виноват Рома" class="w-100 h-100">
+        </div>
+        <div class="col-10">
+            <h2>{{item.title}}</h2>
+            <div>
+                {{item.content}}
+            </div>
+            Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+            {% if current_user.is_authenticated and current_user == item.user %}
+            <div>
+                <a href="/news/{{ item.id }}" class="btn btn-warning">
+                    Изменить
+                </a>
+                <a href="/news_delete/{{ item.id }}" class="btn btn-danger">
+                    Удалить
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endfor %}
-    {% if current_user.is_authenticated %}
-    <a href="news" class="btn btn-secondary">Добавить новость</a>
-    {% endif %}
+{% if current_user.is_authenticated %}
+<a href="news" class="btn btn-secondary">Добавить новость</a>
+{% endif %}
 {% endblock %}

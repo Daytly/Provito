@@ -9,6 +9,7 @@ from data.news import News
 from data.users import User
 from data import db_session, news_api, news_resources
 from forms.NewsForm import NewsForm
+from forms.SearchForm import SearchForm
 
 app = Flask(__name__)
 api = Api(app)
@@ -28,15 +29,36 @@ def main():
     app.run()
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def index():
+    form = SearchForm()
+    if form.validate_on_submit():
+        return redirect(f'/search/{form.label.data}')
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
         news = db_sess.query(News).filter(
             (News.user == current_user) | (News.is_private!=True))
     else:
         news = db_sess.query(News).filter(News.is_private!=True)
-    return render_template("index.html", news=news, url_for=url_for)
+    return render_template("index.html", news=news, url_for=url_for, form=form)
+
+
+@app.route("/search/<string:searchWord>", methods=['GET', 'POST'])
+def search(searchWord):
+    form = SearchForm()
+    db_sess = db_session.create_session()
+    if current_user.is_authenticated:
+        news = db_sess.query(News).filter(
+            (News.user == current_user) | (News.is_private!=True))
+    else:
+        news = db_sess.query(News).filter(News.is_private!=True)
+    if request.method == 'GET':
+        print(f'Поиск: {searchWord}')
+        return render_template('search.html', form=form, search=searchWord, news=news)
+    if form.validate_on_submit():
+        print(f'Поиск: {form.label.data}')
+        return render_template('search.html', form=form, search=form.label.data, news=news)
+    return render_template('search.html', form=form, search='', news=news)
 
 
 @app.route("/confirmation")
