@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="col-md6 border rounded" style="padding:1% 2%; margin:1% 2%; background: white;">
 <h1>Добавление новости</h1>
 <form action="" method="post" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
@@ -36,4 +37,5 @@
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     {{message}}
 </form>
+</div>>
 {% endblock %}
