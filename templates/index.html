@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form action="" method="post" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.label.label }}
+<div style="padding:1% 1%; margin:1% 2%">
+    <form style="font-size: 20px; line-height: 0;" action="" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.label.label }}
         <div class="row">
-            <div class="col-9" style="padding: 4px; border:2px">
+            <div class="col-10" style="padding: 4px; border:2px">
                 {{ form.label(class="form-control") }}
             </div>
             <div class="col-2" style="padding: 4px; border:2px">
@@ -14,12 +15,13 @@
             </div>
         </div>
         {% for error in form.label.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
         {% endfor %}
-    </p>
-</form>
+        </p>
+    </form>
+</div>
 <h1>Предложения обмена</h1>
 {% for item in news%}
 {% if search in item.title or not search%}
@@ -46,17 +48,17 @@
             {% else %}
         </div>
 
-            <div class="col-2">
-                <a href="/chat/{{ item.user.id }}" class="btn btn-success">
-                    Чат с пользователем
-                </a>
-            </div>
+        <div class="col-2">
+            <a href="/chat/{{ item.user.id }}" class="btn btn-success">
+                Чат с пользователем
+            </a>
+        </div>
         {% endif %}
     </div>
 </div>
 {% endif %}
 {% endfor %}
-    {% if current_user.is_authenticated %}
-    <a href="news" class="btn btn-secondary">Добавить новость</a>
-    {% endif %}
+{% if current_user.is_authenticated %}
+<a href="news" class="btn btn-secondary">Добавить новость</a>
+{% endif %}
 {% endblock %}
