@@ -70,6 +70,7 @@ def search(searchWord):
                   'author': emailAuthor}
     else:
         search = {'title': text, 'author': ''}
+    print('Поиск: ', search)
     return render_template('index.html', form=form, url_for=url_for, search=search, news=news)
 
 
