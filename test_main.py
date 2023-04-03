@@ -41,7 +41,7 @@ def index():
             (News.user == current_user) | (News.is_private!=True))
     else:
         news = db_sess.query(News).filter(News.is_private!=True)
-    return render_template("index.html", news=news, url_for=url_for, form=form)
+    return render_template("index.html", news=news, url_for=url_for, form=form, search='')
 
 
 @app.route("/search/<string:searchWord>", methods=['GET', 'POST'])
@@ -55,11 +55,11 @@ def search(searchWord):
         news = db_sess.query(News).filter(News.is_private!=True)
     if request.method == 'GET':
         print(f'Поиск: {searchWord}')
-        return render_template('search.html', form=form, search=searchWord, news=news)
+        return render_template('index.html', form=form, url_for=url_for, search=searchWord, news=news)
     if form.validate_on_submit():
         print(f'Поиск: {form.label.data}')
-        return render_template('search.html', form=form, search=form.label.data, news=news)
-    return render_template('search.html', form=form, search='', news=news)
+        return render_template('index.html', form=form, url_for=url_for,  search=form.label.data, news=news)
+    return render_template('index.html', form=form, url_for=url_for,  search='', news=news)
 
 
 @app.route("/confirmation")
