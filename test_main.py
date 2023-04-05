@@ -11,6 +11,7 @@ from data.users import User
 from data import db_session, advertisement_api, advertisement_resources
 from forms.AdvertisementForm import AdvertisementForm
 from forms.SearchForm import SearchForm
+from functions import check_password
 
 app = Flask(__name__)
 api = Api(app)
@@ -42,7 +43,7 @@ def index():
     else:
         advertisement = db_sess.query(Advertisement).filter(Advertisement.is_private != True)
     return render_template("index.html", advertisement=advertisement, url_for=url_for, form=form, search={'title': '',
-                                                                                        'author': ''})
+                                                                                                          'author': ''})
 
 
 @app.route("/search/<string:searchWord>", methods=['GET', 'POST'])
@@ -78,8 +79,8 @@ def search(searchWord):
 def confirmation(id):
     db_sess = db_session.create_session()
     advertisement = db_sess.query(Advertisement).filter(Advertisement.id == id,
-                                               Advertisement.user == current_user
-                                               ).first()
+                                                        Advertisement.user == current_user
+                                                        ).first()
     db_sess.delete(advertisement)
     db_sess.commit()
 
@@ -88,13 +89,15 @@ def confirmation(id):
 def reqister():
     form = RegisterForm()
     if form.validate_on_submit():
-        if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация', form=form,
-                                   message="Пароли не совпадают")
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first():
             return render_template('register.html', title='Регистрация', form=form,
                                    message="Такой пользователь уже есть")
+        try:
+            check_password(form.password.data, form.password_again.data)
+        except Exception as error:
+            return render_template('register.html', title='Регистрация', form=form,
+                                   message=error.__str__())
         user = User(
             name=form.name.data,
             email=form.email.data,
@@ -168,8 +171,8 @@ def edit_advertisement(id):
     if request.method == "GET":
         db_sess = db_session.create_session()
         advertisement = db_sess.query(Advertisement).filter(Advertisement.id == id,
-                                                   Advertisement.user == current_user
-                                                   ).first()
+                                                            Advertisement.user == current_user
+                                                            ).first()
         if advertisement:
             form.title.data = advertisement.title
             form.content.data = advertisement.content
@@ -180,8 +183,8 @@ def edit_advertisement(id):
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         advertisement = db_sess.query(Advertisement).filter(Advertisement.id == id,
-                                                   Advertisement.user == current_user
-                                                   ).first()
+                                                            Advertisement.user == current_user
+                                                            ).first()
         if advertisement:
             advertisement.title = form.title.data
             advertisement.content = form.content.data
@@ -208,8 +211,8 @@ def edit_advertisement(id):
 def advertisement_delete(id):
     db_sess = db_session.create_session()
     advertisement = db_sess.query(Advertisement).filter(Advertisement.id == id,
-                                               Advertisement.user == current_user
-                                               ).first()
+                                                        Advertisement.user == current_user
+                                                        ).first()
     if advertisement:
         db_sess.delete(advertisement)
         db_sess.commit()
@@ -247,13 +250,15 @@ def edit_user():
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.id == current_user.id, ).first()
-        if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация', form=form,
-                                   message="Пароли не совпадают")
         user1 = db_sess.query(User).filter(User.email == form.email.data).first()
         if user1.id != current_user.id:
-            return render_template('register.html', title='Регистрация', form=form,
+            return render_template('register.html', title='Редактирование', form=form,
                                    message="Такой пользователь уже есть")
+        try:
+            check_password(form.password.data, form.password_again.data)
+        except Exception as error:
+            return render_template('register.html', title='Регистрация', form=form,
+                                   message=error.__str__())
         if user:
             user.email = form.email.data
             user.set_password(form.password.data)
