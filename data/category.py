@@ -5,8 +5,8 @@ from .db_session import SqlAlchemyBase
 association_table = sqlalchemy.Table(
     'association',
     SqlAlchemyBase.metadata,
-    sqlalchemy.Column('news', sqlalchemy.Integer,
-                      sqlalchemy.ForeignKey('news.id')),
+    sqlalchemy.Column('advertisement', sqlalchemy.Integer,
+                      sqlalchemy.ForeignKey('advertisement.id')),
     sqlalchemy.Column('category', sqlalchemy.Integer,
                       sqlalchemy.ForeignKey('category.id'))
 )

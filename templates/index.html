@@ -23,7 +23,7 @@
     </form>
 </div>
 <h1>Предложения обмена</h1>
-{% for item in news%}
+{% for item in advertisement%}
 {% if ((search['title'] in item.title or not search['title']) and (search['author'] == item.user.email or not search['author']))%}
 <div class="col-md6 border rounded" style="padding:1% 2%; margin:1% 2%; background: white;">
     <div class="row align-items-center">
@@ -38,10 +38,10 @@
             Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
             {% if current_user.is_authenticated and current_user == item.user %}
             <div>
-                <a href="/news/{{ item.id }}" class="btn btn-warning">
+                <a href="/advertisement/{{ item.id }}" class="btn btn-warning">
                     Изменить
                 </a>
-                <a href="/news_delete/{{ item.id }}" class="btn btn-danger">
+                <a href="/advertisement_delete/{{ item.id }}" class="btn btn-danger">
                     Удалить
                 </a>
             </div>

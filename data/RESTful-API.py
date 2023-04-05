@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 from flask_restful import reqparse, abort, Api, Resource
 
 from data import db_session
-from data.news import News
+from data.advertisement import Advertisement
 
 app = Flask(__name__)
 api = Api(app)
@@ -15,47 +15,47 @@ parser.add_argument('is_published', required=True, type=bool)
 parser.add_argument('user_id', required=True, type=int)
 
 
-def abort_if_news_not_found(news_id):
+def abort_if_advertisement_not_found(advertisement_id):
     session = db_session.create_session()
-    news = session.query(News).get(news_id)
-    if not news:
-        abort(404, message=f"News {news_id} not found")
+    advertisement = session.query(Advertisement).get(advertisement_id)
+    if not advertisement:
+        abort(404, message=f"Advertisement {advertisement_id} not found")
 
 
-class NewsResource(Resource):
-    def get(self, news_id):
-        abort_if_news_not_found(news_id)
+class AdvertisementResource(Resource):
+    def get(self, advertisement_id):
+        abort_if_advertisement_not_found(advertisement_id)
         session = db_session.create_session()
-        news = session.query(News).get(news_id)
-        return jsonify({'news': news.to_dict(
+        advertisement = session.query(Advertisement).get(advertisement_id)
+        return jsonify({'advertisement': advertisement.to_dict(
             only=('title', 'content', 'user_id', 'is_private'))})
 
-    def delete(self, news_id):
-        abort_if_news_not_found(news_id)
+    def delete(self, advertisement_id):
+        abort_if_advertisement_not_found(advertisement_id)
         session = db_session.create_session()
-        news = session.query(News).get(news_id)
-        session.delete(news)
+        advertisement = session.query(Advertisement).get(advertisement_id)
+        session.delete(advertisement)
         session.commit()
         return jsonify({'success': 'OK'})
 
 
-class NewsListResource(Resource):
+class AdvertisementListResource(Resource):
     def get(self):
         session = db_session.create_session()
-        news = session.query(News).all()
-        return jsonify({'news': [item.to_dict(
-            only=('title', 'content', 'user.name')) for item in news]})
+        advertisement = session.query(Advertisement).all()
+        return jsonify({'advertisement': [item.to_dict(
+            only=('title', 'content', 'user.name')) for item in advertisement]})
 
     def post(self):
         args = parser.parse_args()
         session = db_session.create_session()
-        news = News(
+        advertisement = Advertisement(
             title=args['title'],
             content=args['content'],
             user_id=args['user_id'],
             is_published=args['is_published'],
             is_private=args['is_private']
         )
-        session.add(news)
+        session.add(advertisement)
         session.commit()
         return jsonify({'success': 'OK'})

@@ -2,10 +2,10 @@ from flask import Flask, render_template, redirect, session, make_response, requ
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_restful import Api
 from forms.user import RegisterForm, LoginForm
-from data.news import News
+from data.advertisement import Advertisement
 from data.users import User
-from data import db_session, news_api, news_resources
-from forms.NewsForm import NewsForm
+from data import db_session, advertisement_api, advertisement_resources
+from forms.AdvertisementForm import AdvertisementForm
 
 app = Flask(__name__)
 api = Api(app)
@@ -16,12 +16,12 @@ login_manager.init_app(app)
 
 def main():
     db_session.global_init("db/blogs.db")
-    app.register_blueprint(news_api.blueprint)
+    app.register_blueprint(advertisement_api.blueprint)
     # для списка объектов
     api = Api(app)
-    api.add_resource(news_resources.NewsListResource, '/api/v2/news')
+    api.add_resource(advertisement_resources.AdvertisementListResource, '/api/v2/advertisement')
     # для одного объекта
-    api.add_resource(news_resources.NewsResource, '/api/v2/news/<int:news_id>')
+    api.add_resource(advertisement_resources.AdvertisementResource, '/api/v2/advertisement/<int:advertisement_id>')
     app.run()
 
 
@@ -29,20 +29,20 @@ def main():
 def index():
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
-        news = db_sess.query(News).filter(
-            (News.user == current_user) | (News.is_private!=True))
+        advertisement = db_sess.query(Advertisement).filter(
+            (Advertisement.user == current_user) | (Advertisement.is_private != True))
     else:
-        news = db_sess.query(News).filter(News.is_private!=True)
-    return render_template("index.html", news=news, url_for=url_for)
+        advertisement = db_sess.query(Advertisement).filter(Advertisement.is_private != True)
+    return render_template("index.html", advertisement=advertisement, url_for=url_for)
 
 
 @app.route("/confirmation")
 def confirmation(id):
     db_sess = db_session.create_session()
-    news = db_sess.query(News).filter(News.id == id,
-                                      News.user == current_user
-                                      ).first()
-    db_sess.delete(news)
+    advertisement = db_sess.query(Advertisement).filter(Advertisement.id == id,
+                                               Advertisement.user == current_user
+                                               ).first()
+    db_sess.delete(advertisement)
     db_sess.commit()
 
 
@@ -98,66 +98,66 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
-@app.route('/news',  methods=['GET', 'POST'])
+@app.route('/advertisement',  methods=['GET', 'POST'])
 @login_required
-def add_news():
-    form = NewsForm()
+def add_advertisement():
+    form = AdvertisementForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        news = News()
-        news.title = form.title.data
-        news.content = form.content.data
-        news.is_private = form.is_private.data
-        current_user.news.append(news)
+        advertisement = Advertisement()
+        advertisement.title = form.title.data
+        advertisement.content = form.content.data
+        advertisement.is_private = form.is_private.data
+        current_user.advertisement.append(advertisement)
         db_sess.merge(current_user)
         db_sess.commit()
         return redirect('/')
-    return render_template('news.html', title='Добавление новости',
+    return render_template('advertisement.html', title='Добавление новости',
                            form=form)
 
 
-@app.route('/news/<int:id>', methods=['GET', 'POST'])
+@app.route('/advertisement/<int:id>', methods=['GET', 'POST'])
 @login_required
-def edit_news(id):
-    form = NewsForm()
+def edit_advertisement(id):
+    form = AdvertisementForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
-        news = db_sess.query(News).filter(News.id == id,
-                                          News.user == current_user
-                                          ).first()
-        if news:
-            form.title.data = news.title
-            form.content.data = news.content
-            form.is_private.data = news.is_private
+        advertisement = db_sess.query(Advertisement).filter(Advertisement.id == id,
+                                                   Advertisement.user == current_user
+                                                   ).first()
+        if advertisement:
+            form.title.data = advertisement.title
+            form.content.data = advertisement.content
+            form.is_private.data = advertisement.is_private
         else:
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        news = db_sess.query(News).filter(News.id == id,
-                                          News.user == current_user
-                                          ).first()
-        if news:
-            news.title = form.title.data
-            news.content = form.content.data
-            news.is_private = form.is_private.data
+        advertisement = db_sess.query(Advertisement).filter(Advertisement.id == id,
+                                                   Advertisement.user == current_user
+                                                   ).first()
+        if advertisement:
+            advertisement.title = form.title.data
+            advertisement.content = form.content.data
+            advertisement.is_private = form.is_private.data
             db_sess.commit()
             return redirect('/')
         else:
             abort(404)
-    return render_template('news.html',
+    return render_template('advertisement.html',
                            title='Редактирование новости',
                            form=form)
 
 
-@app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
+@app.route('/advertisement_delete/<int:id>', methods=['GET', 'POST'])
 @login_required
-def news_delete(id):
+def advertisement_delete(id):
     db_sess = db_session.create_session()
-    news = db_sess.query(News).filter(News.id == id,
-                                      News.user == current_user
-                                      ).first()
-    if news:
-        db_sess.delete(news)
+    advertisement = db_sess.query(Advertisement).filter(Advertisement.id == id,
+                                               Advertisement.user == current_user
+                                               ).first()
+    if advertisement:
+        db_sess.delete(advertisement)
         db_sess.commit()
     else:
         abort(404)

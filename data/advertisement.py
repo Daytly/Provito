@@ -6,8 +6,8 @@ from sqlalchemy_serializer import SerializerMixin
 from .db_session import SqlAlchemyBase
 
 
-class News(SqlAlchemyBase, SerializerMixin):
-    __tablename__ = 'news'
+class Advertisement(SqlAlchemyBase, SerializerMixin):
+    __tablename__ = 'advertisement'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
@@ -19,5 +19,5 @@ class News(SqlAlchemyBase, SerializerMixin):
     user = orm.relationship('User')
     categories = orm.relationship("Category",
                                   secondary="association",
-                                  backref="news")
+                                  backref="advertisement")
     file = sqlalchemy.Column(sqlalchemy.String)
