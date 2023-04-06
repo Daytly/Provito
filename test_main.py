@@ -195,8 +195,6 @@ def edit_advertisement(id):
                 path = f'static/users_data/{current_user.email}/files/{filename}'
                 file.save(path)
                 advertisement.file = f'users_data/{current_user.email}/files/{filename}'
-            else:
-                advertisement.file = 'img/img.png'
             db_sess.commit()
             return redirect('/')
         else:
