@@ -35,7 +35,7 @@
             <div>
                 {{item.content}}
             </div>
-            Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+            Автор - {{item.user.name}}, Дата написания - {{item.created_date.strftime("%m-%d-%Y %H:%M")}}
             {% if current_user.is_authenticated and current_user == item.user %}
             <div>
                 <a href="/advertisement/{{ item.id }}" class="btn btn-warning">

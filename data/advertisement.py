@@ -6,6 +6,10 @@ from sqlalchemy_serializer import SerializerMixin
 from .db_session import SqlAlchemyBase
 
 
+def time():
+    return datetime.datetime.now().strftime("%m-%d-%Y %H:%M")
+
+
 class Advertisement(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'advertisement'
 

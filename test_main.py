@@ -304,6 +304,14 @@ def edit_user():
                            form=form)
 
 
+@app.route('/settings/delete', methods=['GET', 'POST'])
+def delete_user():
+    db_sess = db_session.create_session()
+    db_sess.delete(current_user)
+    db_sess.commit()
+    return redirect('/')
+
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)

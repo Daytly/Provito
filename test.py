@@ -1,6 +1,3 @@
-from requests import get, post, delete
-
-print(delete('http://localhost:5000/api/news/999').json())
-# новости с id = 999 нет в базе
-
-print(delete('http://localhost:5000/api/news/2').json())
+import datetime
+datetime.datetime.now().time()
+print(datetime.datetime.now().strftime("%m-%d-%Y %H:%M"))
