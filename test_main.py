@@ -8,11 +8,15 @@ from flask_restful import Api
 from forms.user import RegisterForm, LoginForm
 from data.advertisement import Advertisement
 from data.users import User
+from data.chats import Chat
 from data import db_session, advertisement_api, advertisement_resources
 from forms.AdvertisementForm import AdvertisementForm
 from forms.SearchForm import SearchForm
+from forms.ChatForm import ChatForm
 from functions import check_password
+from tinydb import TinyDB, Query
 
+chats = TinyDB('chats_db.json')
 app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -158,10 +162,39 @@ def add_advertisement():
                            form=form)
 
 
-@app.route('/chat/<int:id>', methods=['GET', 'POST'])
+@app.route('/chat/<int:_id>', methods=['GET', 'POST'])
 @login_required
-def WrIte_MeSSage(id):
-    return jsonify(['wellcome'])
+def WrIte_MeSSage(_id):
+    form = ChatForm()
+    sess = db_session.create_session()
+    res = sess.query(Chat).filter((Chat.user_id1 == min(current_user.id, _id)) &
+                                  (Chat.user_id2 == max(current_user.id, _id)))
+    if res:
+        chat_id = res.first()
+    else:
+        chat = Chat(user_id1=min(current_user.id, _id), user_id2=max(current_user.id, _id))
+        sess.add(chat)
+        sess.commit()
+        chat_id = chat.id
+    table = chats.table(str(chat_id))
+    other = sess.query(User).filter(User.id == _id).first()
+    if request.method == 'POST':
+        sess = db_session.create_session()
+        res = sess.query(Chat).filter((Chat.user_id1 == min(current_user.id, _id)) &
+                                      (Chat.user_id2 == max(current_user.id, _id)))
+        if res:
+            chat_id = res.first()
+        else:
+            chat = Chat(user_id1=min(current_user.id, _id), user_id2=max(current_user.id, _id))
+            sess.add(chat)
+            sess.commit()
+            chat_id = chat.id
+        table = chats.table(str(chat_id))
+        if form.message.data:
+            table.insert({'id': current_user.id, 'text': form.message.data})
+        return redirect(f'/chat/{_id}')
+    return render_template('chat_room(test).html', messages=table.all(), cur=current_user,
+                           other=other, form=form)
 
 
 @app.route('/advertisement/<int:id>', methods=['GET', 'POST'])
