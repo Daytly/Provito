@@ -74,10 +74,10 @@ def search(searchWord):
         if emailEndIndex < len(text[:emailIndex]):
             emailEndIndex = len(text)
         emailAuthor = text[emailIndex:emailEndIndex]
-        search = {'title': ' '.join((text[:emailIndex - 1] + text[emailEndIndex:]).split()),
+        search = {'title': (' '.join((text[:emailIndex - 1] + text[emailEndIndex:]).split()).lower()),
                   'author': emailAuthor}
     else:
-        search = {'title': text, 'author': ''}
+        search = {'title': text.lower(), 'author': ''}
     print('Поиск: ', search)
     return render_template('index.html', form=form, url_for=url_for, search=search, advertisement=advertisement)
 
@@ -163,6 +163,17 @@ def add_advertisement():
         return redirect('/')
     return render_template('advertisement.html', title='Добавление новости',
                            form=form)
+
+
+@app.route('/advertisement/<int:advertisement_id>', methods=['GET', 'POST'])
+@login_required
+def advertisement_page(advertisement_id):
+    db_sess = db_session.create_session()
+    advertisement = db_sess.query(Advertisement).filter(Advertisement.id == advertisement_id).first()
+    if advertisement:
+        return render_template('advertisement_page.html', advertisement=advertisement, current_user=current_user)
+    else:
+        return redirect('/')
 
 
 @app.route('/chat/<int:_id>', methods=['GET', 'POST'])
