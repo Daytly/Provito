@@ -15,6 +15,7 @@ from forms.SearchForm import SearchForm
 from forms.ChatForm import ChatForm
 from functions import check_password
 from tinydb import TinyDB, Query
+from livereload import Server
 
 chats = TinyDB('chats_db.json')
 app = Flask(__name__)
@@ -32,7 +33,9 @@ def main():
     api.add_resource(advertisement_resources.AdvertisementListResource, '/api/v2/advertisement')
     # для одного объекта
     api.add_resource(advertisement_resources.AdvertisementResource, '/api/v2/advertisement/<int:advertisement_id>')
-    app.run()
+    # app.run()
+    server = Server(app.wsgi_app)
+    server.serve()
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -92,7 +95,7 @@ def confirmation(id):
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     form = RegisterForm()
-    if form.validate_on_submit():
+    if request.method == 'POST':
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first():
             return render_template('register.html', title='Регистрация', form=form,
@@ -168,28 +171,18 @@ def WrIte_MeSSage(_id):
     form = ChatForm()
     sess = db_session.create_session()
     res = sess.query(Chat).filter((Chat.user_id1 == min(current_user.id, _id)) &
-                                  (Chat.user_id2 == max(current_user.id, _id)))
+                                  (Chat.user_id2 == max(current_user.id, _id))).first()
     if res:
-        chat_id = res.first()
+        chat_id = res.id
     else:
-        chat = Chat(user_id1=min(current_user.id, _id), user_id2=max(current_user.id, _id))
+        chat = Chat(user_id1=min(current_user.id, _id),
+                    user_id2=max(current_user.id, _id))
         sess.add(chat)
         sess.commit()
         chat_id = chat.id
     table = chats.table(str(chat_id))
     other = sess.query(User).filter(User.id == _id).first()
     if request.method == 'POST':
-        sess = db_session.create_session()
-        res = sess.query(Chat).filter((Chat.user_id1 == min(current_user.id, _id)) &
-                                      (Chat.user_id2 == max(current_user.id, _id)))
-        if res:
-            chat_id = res.first()
-        else:
-            chat = Chat(user_id1=min(current_user.id, _id), user_id2=max(current_user.id, _id))
-            sess.add(chat)
-            sess.commit()
-            chat_id = chat.id
-        table = chats.table(str(chat_id))
         if form.message.data:
             table.insert({'id': current_user.id, 'text': form.message.data})
         return redirect(f'/chat/{_id}')

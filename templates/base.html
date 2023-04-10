@@ -15,7 +15,7 @@
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand" href="/">Provito</a>
         {% if current_user.is_authenticated %}
-        <a href="advertisement" class="btn btn-success">Создать объявление</a>
+        <a href="/advertisement" class="btn btn-success">Создать объявление</a>
         {% endif %}
         {% if current_user.is_authenticated %}
         <a class="navbar-brand" href="/settings">{{ current_user.name }}</a>
