@@ -193,7 +193,7 @@ def WrIte_MeSSage(_id):
         if form.message.data:
             table.insert({'id': current_user.id, 'text': form.message.data})
         return redirect(f'/chat/{_id}')
-    return render_template('chat_room(test).html', messages=table.all(), cur=current_user,
+    return render_template('chat_room.html', messages=table.all(), cur=current_user,
                            other=other, form=form)
 
 
