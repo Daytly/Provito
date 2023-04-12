@@ -10,105 +10,26 @@
         <div class="row">
             <div class="col-md-4 bg-white ">
                 <div class=" row border-bottom padding-sm" style="height: 40px;">
-                    Member
+                    Предыдущие чаты
                 </div>
 
                 <!-- Короч это активные чаты -->
                 <ul class="friend-list">
+                    {% for user in previous %}
                     <li class="active bounceInDown">
-                        <a href="#" class="clearfix">
-                            <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" class="img-circle">
+                        <a href="/chat/{{user.id}}" class="clearfix">
                             <div class="friend-name">
-                                <strong>John Doe</strong>
+                                <strong>{{ user.name }}</strong>
                             </div>
-                            <div class="last-message text-muted">Hello, Are you there?</div>
-                            <small class="time text-muted">Just now</small>
-                            <small class="chat-alert label label-danger">1</small>
                         </a>
                     </li>
-                    <li>
-                        <a href="#" class="clearfix">
-                            <img src="https://bootdey.com/img/Content/user_2.jpg" alt="" class="img-circle">
-                            <div class="friend-name">
-                                <strong>Jane Doe</strong>
-                            </div>
-                            <div class="last-message text-muted">Lorem ipsum dolor sit amet.</div>
-                            <small class="time text-muted">5 mins ago</small>
-                            <small class="chat-alert text-muted"><i class="fa fa-check"></i></small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="clearfix">
-                            <img src="https://bootdey.com/img/Content/user_3.jpg" alt="" class="img-circle">
-                            <div class="friend-name">
-                                <strong>Kate</strong>
-                            </div>
-                            <div class="last-message text-muted">Lorem ipsum dolor sit amet.</div>
-                            <small class="time text-muted">Yesterday</small>
-                            <small class="chat-alert text-muted"><i class="fa fa-reply"></i></small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="clearfix">
-                            <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" class="img-circle">
-                            <div class="friend-name">
-                                <strong>Kate</strong>
-                            </div>
-                            <div class="last-message text-muted">Lorem ipsum dolor sit amet.</div>
-                            <small class="time text-muted">Yesterday</small>
-                            <small class="chat-alert text-muted"><i class="fa fa-reply"></i></small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="clearfix">
-                            <img src="https://bootdey.com/img/Content/user_2.jpg" alt="" class="img-circle">
-                            <div class="friend-name">
-                                <strong>Kate</strong>
-                            </div>
-                            <div class="last-message text-muted">Lorem ipsum dolor sit amet.</div>
-                            <small class="time text-muted">Yesterday</small>
-                            <small class="chat-alert text-muted"><i class="fa fa-reply"></i></small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="clearfix">
-                            <img src="https://bootdey.com/img/Content/user_6.jpg" alt="" class="img-circle">
-                            <div class="friend-name">
-                                <strong>Kate</strong>
-                            </div>
-                            <div class="last-message text-muted">Lorem ipsum dolor sit amet.</div>
-                            <small class="time text-muted">Yesterday</small>
-                            <small class="chat-alert text-muted"><i class="fa fa-reply"></i></small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="clearfix">
-                            <img src="https://bootdey.com/img/Content/user_5.jpg" alt="" class="img-circle">
-                            <div class="friend-name">
-                                <strong>Kate</strong>
-                            </div>
-                            <div class="last-message text-muted">Lorem ipsum dolor sit amet.</div>
-                            <small class="time text-muted">Yesterday</small>
-                            <small class="chat-alert text-muted"><i class="fa fa-reply"></i></small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="clearfix">
-                            <img src="https://bootdey.com/img/Content/user_2.jpg" alt="" class="img-circle">
-                            <div class="friend-name">
-                                <strong>Jane Doe</strong>
-                            </div>
-                            <div class="last-message text-muted">Lorem ipsum dolor sit amet.</div>
-                            <small class="time text-muted">5 mins ago</small>
-                            <small class="chat-alert text-muted"><i class="fa fa-check"></i></small>
-                        </a>
-                    </li>
+                    {% endfor %}
                 </ul>
             </div>
 
             <!-- ТУт конец активных чатов -->
-            <div class="col-md-8 bg-white ">
-                <div class="chat-message" style="overflow-y:scroll;height:30%;">
+            <div class="col-md-8 bg-white">
+                <div class="chat-message" style="overflow-y:scroll; height: 55em;" id="chelik">
                     <ul class="chat">
                         <!-- Начало сообщения -->
                         {% for message in messages %}
@@ -120,8 +41,6 @@
                             <div class="chat-body clearfix">
                                 <div class="header">
                                     <strong class="primary-font">{{other.name}}</strong>
-                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 12 mins
-                                        ago</small>
                                 </div>
                                 <p>
                                     {{message['text']}}
@@ -137,8 +56,6 @@
                             <div class="chat-body clearfix">
                                 <div class="header">
                                     <strong class="primary-font">{{cur.name}}</strong>
-                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 13 mins
-                                        ago</small>
                                 </div>
                                 <p>
                                     {{message['text']}}
@@ -163,6 +80,8 @@
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript">
+  var block = document.getElementById("chelik");
+  block.scrollTop = block.scrollHeight;
 
     </script>
 </form>

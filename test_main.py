@@ -192,13 +192,17 @@ def WrIte_MeSSage(_id):
         sess.commit()
         chat_id = chat.id
     table = chats.table(str(chat_id))
+    previous = [i.user_id1 if i.user_id1 != current_user.id else i.user_id2 for i
+                in sess.query(Chat).filter((Chat.user_id1 == current_user.id) |
+                                           (Chat.user_id2 == current_user.id)).all()]
+    previous = [sess.query(User).filter(User.id == i).first() for i in previous]
     other = sess.query(User).filter(User.id == _id).first()
     if request.method == 'POST':
         if form.message.data:
             table.insert({'id': current_user.id, 'text': form.message.data})
         return redirect(f'/chat/{_id}')
     return render_template('chat_room.html', messages=table.all(), cur=current_user,
-                           other=other, form=form)
+                           other=other, form=form, previous=previous)
 
 
 @app.route('/advertisement/<int:id>', methods=['GET', 'POST'])
