@@ -181,28 +181,32 @@ def advertisement_page(advertisement_id):
 def WrIte_MeSSage(_id):
     form = ChatForm()
     sess = db_session.create_session()
-    res = sess.query(Chat).filter((Chat.user_id1 == min(current_user.id, _id)) &
-                                  (Chat.user_id2 == max(current_user.id, _id))).first()
-    if res:
-        chat_id = res.id
+    if _id != 0:
+        res = sess.query(Chat).filter((Chat.user_id1 == min(current_user.id, _id)) &
+                                      (Chat.user_id2 == max(current_user.id, _id))).first()
+        if res:
+            chat_id = res.id
+        else:
+            chat = Chat(user_id1=min(current_user.id, _id),
+                        user_id2=max(current_user.id, _id))
+            sess.add(chat)
+            sess.commit()
+            chat_id = chat.id
+        other = sess.query(User).filter(User.id == _id).first()
+        table = chats.table(str(chat_id))
     else:
-        chat = Chat(user_id1=min(current_user.id, _id),
-                    user_id2=max(current_user.id, _id))
-        sess.add(chat)
-        sess.commit()
-        chat_id = chat.id
-    table = chats.table(str(chat_id))
+        table = chats.table(str(0))
+        other = None
     previous = [i.user_id1 if i.user_id1 != current_user.id else i.user_id2 for i
                 in sess.query(Chat).filter((Chat.user_id1 == current_user.id) |
                                            (Chat.user_id2 == current_user.id)).all()]
     previous = [sess.query(User).filter(User.id == i).first() for i in previous]
-    other = sess.query(User).filter(User.id == _id).first()
     if request.method == 'POST':
         if form.message.data:
             table.insert({'id': current_user.id, 'text': form.message.data})
         return redirect(f'/chat/{_id}')
     return render_template('chat_room.html', messages=table.all(), cur=current_user,
-                           other=other, form=form, previous=previous)
+                           other=other, form=form, previous=previous, id=_id)
 
 
 @app.route('/advertisement/<int:id>', methods=['GET', 'POST'])

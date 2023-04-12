@@ -28,6 +28,7 @@
             </div>
 
             <!-- ТУт конец активных чатов -->
+            {% if id != 0 %}
             <div class="col-md-8 bg-white">
                 <div class="chat-message" style="overflow-y:scroll; height: 55em;" id="chelik">
                     <ul class="chat">
@@ -75,6 +76,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
