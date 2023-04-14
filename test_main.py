@@ -213,7 +213,8 @@ def WrIte_MeSSage(_id):
     previous = [sess.query(User).filter(User.id == i).first() for i in previous]
     if request.method == 'POST':
         if form.message.data:
-            table.insert({'id': current_user.id, 'text': form.message.data, 'time': datetime.datetime.now()})
+            table.insert({'id': current_user.id, 'text': form.message.data, 'time':
+                datetime.datetime.now().strftime('"%m-%d-%Y %H:%M"')})
         return redirect(f'/chat/{_id}')
     return render_template('chat_room.html', messages=table.all(), cur=current_user,
                            other=other, form=form, previous=previous, id=_id)
