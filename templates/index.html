@@ -39,7 +39,7 @@
                 </div>
                 {% if current_user.is_authenticated and current_user == item.user %}
                 <div>
-                    <a href="/advertisement/{{ item.id }}" class="btn btn-warning">
+                    <a href="/advertisement/edit/{{ item.id }}" class="btn btn-warning">
                         Изменить
                     </a>
                     <a href="/advertisement_delete/{{ item.id }}" class="btn btn-danger">
@@ -47,11 +47,13 @@
                     </a>
                 </div>
                 {% else %}
+                {% if current_user.is_authenticated %}
                 <div class="col-2">
                     <a href="/chat/{{ item.user.id }}" class="btn btn-success">
                         Чат с пользователем
                     </a>
                 </div>
+                {% endif %}
                 {% endif %}
             </div>
         </div>

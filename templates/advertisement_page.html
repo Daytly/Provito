@@ -3,8 +3,8 @@
 <link href="/static/styles/windows_style.css">
 <div class="col-md12 border rounded" style="padding:1% 2%; margin:1% 2%; background: white;">
     <h1>{{advertisement.title}}</h1>
-    <img src="{{advertisement.file}}" style="display: block; margin-left: auto;
-    margin-right: auto;  width: 80%;">
+    <img src="{{url_for('static', filename=advertisement.file)}}" style="display: block; margin-left: auto;
+    margin-right: auto;" width="500" height="500">
     <h3>Описание:</h3>
     <div style="font-size:x-large;">
         {% for line in advertisement.content.split("\n")%}

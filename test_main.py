@@ -1,7 +1,5 @@
 import datetime
 import os
-import sys
-import requests as req
 import werkzeug.utils
 from flask import Flask, render_template, redirect, session, make_response, request, abort, jsonify, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -181,7 +179,9 @@ def advertisement_page(advertisement_id):
     db_sess = db_session.create_session()
     advertisement = db_sess.query(Advertisement).filter(Advertisement.id == advertisement_id).first()
     if advertisement:
-        return render_template('advertisement_page.html', advertisement=advertisement, current_user=current_user)
+        return render_template('advertisement_page.html', advertisement=advertisement,
+                               current_user=current_user,
+                               url_for=url_for)
     else:
         return redirect('/')
 
@@ -219,7 +219,7 @@ def WrIte_MeSSage(_id):
                            other=other, form=form, previous=previous, id=_id)
 
 
-@app.route('/advertisement/<int:id>', methods=['GET', 'POST'])
+@app.route('/advertisement/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_advertisement(id):
     form = AdvertisementForm()
