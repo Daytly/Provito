@@ -1,3 +1,4 @@
+import datetime
 import os
 import sys
 import requests as req
@@ -105,17 +106,20 @@ def reqister():
         except Exception as error:
             return render_template('register.html', title='Регистрация', form=form,
                                    message=error.__str__())
+        user = User()
         file = form.photo.data
-        user = User(
-            name=form.name.data,
-            email=form.email.data,
-            about=form.about.data
-        )
+        user.name = form.name.data
+        user.email = form.email.data
+        user.about = form.about.data
+        new_user(user)
+        print(file)
         if file:
             filename = werkzeug.utils.secure_filename(file.filename)
-            path = f'static/users_data/{current_user.email}/avatar/{filename}'
+            path = f'static/users_data/{user.email}/avatar/{filename}'
             file.save(path)
-            user.file = f'users_data/{current_user.email}/avatar/{filename}'
+            user.avatar = f'users_data/{user.email}/avatar/{filename}'
+        else:
+            user.avatar = 'https://bootdey.com/img/Content/user_1.jpg'
         user.set_password(form.password.data)
         new_user(user)
         db_sess.add(user)
@@ -160,7 +164,7 @@ def add_advertisement():
             filename = werkzeug.utils.secure_filename(file.filename)
             path = f'static/users_data/{current_user.email}/files/{filename}'
             file.save(path)
-            advertisement.file = f'/static/users_data/{current_user.email}/files/{filename}'
+            advertisement.file = f'users_data/{current_user.email}/files/{filename}'
         else:
             advertisement.file = 'img/img.png'
         current_user.advertisement.append(advertisement)
@@ -209,7 +213,7 @@ def WrIte_MeSSage(_id):
     previous = [sess.query(User).filter(User.id == i).first() for i in previous]
     if request.method == 'POST':
         if form.message.data:
-            table.insert({'id': current_user.id, 'text': form.message.data})
+            table.insert({'id': current_user.id, 'text': form.message.data, 'time': datetime.datetime.now()})
         return redirect(f'/chat/{_id}')
     return render_template('chat_room.html', messages=table.all(), cur=current_user,
                            other=other, form=form, previous=previous, id=_id)
@@ -313,6 +317,15 @@ def edit_user():
             user.set_password(form.password.data)
             user.name = form.name.data
             user.about = form.about.data
+            file = form.photo.data
+            print(file)
+            if file:
+                filename = werkzeug.utils.secure_filename(file.filename)
+                path = f'static/users_data/{user.email}/avatar/{filename}'
+                file.save(path)
+                user.avatar = f'users_data/{user.email}/avatar/{filename}'
+            else:
+                user.avatar = 'https://bootdey.com/img/Content/user_1.jpg'
             db_sess.commit()
             return redirect('/')
         else:

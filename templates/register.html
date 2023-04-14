@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1>{{title}}</h1>
-<form action="" method="post">
+<form action="" method="post" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     <p>
         {{ form.email.label }}<br>
