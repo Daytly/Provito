@@ -1,6 +1,6 @@
 import os
 import sys
-
+import requests as req
 import werkzeug.utils
 from flask import Flask, render_template, redirect, session, make_response, request, abort, jsonify, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -105,11 +105,17 @@ def reqister():
         except Exception as error:
             return render_template('register.html', title='Регистрация', form=form,
                                    message=error.__str__())
+        file = form.photo.data
         user = User(
             name=form.name.data,
             email=form.email.data,
             about=form.about.data
         )
+        if file:
+            filename = werkzeug.utils.secure_filename(file.filename)
+            path = f'static/users_data/{current_user.email}/avatar/{filename}'
+            file.save(path)
+            user.file = f'users_data/{current_user.email}/avatar/{filename}'
         user.set_password(form.password.data)
         new_user(user)
         db_sess.add(user)
@@ -154,7 +160,7 @@ def add_advertisement():
             filename = werkzeug.utils.secure_filename(file.filename)
             path = f'static/users_data/{current_user.email}/files/{filename}'
             file.save(path)
-            advertisement.file = f'users_data/{current_user.email}/files/{filename}'
+            advertisement.file = f'/static/users_data/{current_user.email}/files/{filename}'
         else:
             advertisement.file = 'img/img.png'
         current_user.advertisement.append(advertisement)
@@ -338,6 +344,7 @@ def new_user(user):
     try:
         os.mkdir('static/users_data/' + user.email)
         os.mkdir('static/users_data/' + user.email + '/files')
+        os.mkdir('static/users_data/' + user.email + '/avatar')
     except FileExistsError:
         pass
 

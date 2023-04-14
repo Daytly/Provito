@@ -41,6 +41,15 @@
         {% endfor %}
     </p>
     <p>
+        {{ form.photo.label }}<br>
+        {{ form.photo }}<br>
+        {% for error in form.photo.errors %}
+            <p content="alert alert-danger" role="alert">
+                <b style="color:red;">{{ error }}</b>
+            </p>
+        {% endfor %}
+    </p>
+    <p>
         {{ form.about.label }}<br>
         {{ form.about(class="form-control") }}<br>
         {% for error in form.about.errors %}

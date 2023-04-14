@@ -17,8 +17,8 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     file_count = sqlalchemy.Column(sqlalchemy.Integer, default=0)
-
     advertisement = orm.relationship("Advertisement", back_populates='user')
+    avatar = sqlalchemy.Column(sqlalchemy.String, default='https://bootdey.com/img/Content/user_1.jpg')
 
     def __repr__(self):
         return f'<User> {self.id} {self.name} {self.email}'
