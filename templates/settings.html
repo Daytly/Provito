@@ -1,18 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<style>
+   img::hover {background: url(static/img/edit_avatar.png);}
+</style>
 <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 <link href="/static/styles/chat_style.css" rel="stylesheet">
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="col-md6 border rounded" style="padding:1% 2%; margin:1% 2%; background: white;">
-    <a class="btn btn-success" href="/">Вернуться</a>
-    <h1>Начтройки</h1>
-    <h2>Имя пользователя: {{user.name}}</h2>
-    <h2>Аватар: <img src="/static/{{ user.avatar }}" style="display: block; margin-left: auto;
-    margin-right: auto;  width: 40%;"></h2>
-    <h2>Информация о пользователе: {{user.about}}</h2>
-    <h2>Почта: {{user.email}}</h2>
+    <div class="row" style="margin: 10px">
+        <div class="col-10">
+            <h1>Наcтройки</h1>
+        </div>
+        <div class="col-2">
+            <a class="btn btn-success" href="/">Вернуться</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            <img alt="avatar" class="rounded-circle" src="/static/{{ user.avatar }}">
+        </div>
+        <div class="col-3">
+            <h2>имя: {{user.name}}</h2>
+        </div>
+        <div class="col-7">
+            <h2>Почта: {{user.email}}</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            <h2>О себе:</h2>
+        </div>
+        <div class="col-10">
+            <h2>{{user.about}}</h2>
+        </div>
+    </div>
     <a class="btn btn-danger" href="/logout">Выйти</a>
     <a class="btn btn-danger" href="/logout">Удалить аккаунт</a>
     <a class="btn btn-success" href="/settings/edit">Изменить</a>
