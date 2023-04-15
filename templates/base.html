@@ -10,24 +10,31 @@
     <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 
 </head>
-<body background="/static/img/backGround.png">
-<header>
-    <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="/">Provito</a>
-        {% if current_user.is_authenticated %}
-        <a href="/advertisement" class="btn btn-success">Создать объявление</a>
-        {% endif %}
-        {% if current_user.is_authenticated %}
-        <a href="/chat/0" class="btn btn-success">Чаты</a>
-        {% endif %}
-        {% if current_user.is_authenticated %}
-        <a class="navbar-brand" href="/settings">{{ current_user.name }}</a>
-        {% else %}
-        <p>
-            <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
-            <a class="btn btn-success" href="/login">Войти</a>
-        </p>
-        {% endif %}
+<body background="/static/img/backGround.png" style="margin-top:0px">
+<header style="background-color: #e3f2fd;">
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/"><b>Provito</b></a>
+          {% if current_user.is_authenticated %}
+        <div class="collapse navbar-collapse">
+          <div class="navbar-nav">
+              <a style="margin-right: 15px" class="nav-link active" aria-current="page" href="/advertisement"><b>создать обьявление</b></a>
+            <a style="margin-right: 15px" class="nav-link active" aria-current="page" href="/chat/0"><b>Чаты</b></a>
+            <a style="margin-right: 15px" class="nav-link active" aria-current="page" href="/authors"><b>авторы</b></a>
+            <a class="nav-link active" aria-current="page" href="/settings"><b>личный кабинет</b></a>
+          </div>
+          {% else %}
+          <p>
+              <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
+              <a class="btn btn-success" href="/login">Войти</a>
+          </p>
+          {% endif %}
+        </div>
+        <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Поиск</button>
+        </form>
+      </div>
     </nav>
 </header>
 <a href="#" id="main" class="col-md6 border rounded">
