@@ -12,9 +12,10 @@ from data import db_session, advertisement_api, advertisement_resources
 from forms.AdvertisementForm import AdvertisementForm
 from forms.SearchForm import SearchForm
 from forms.ChatForm import ChatForm
-from functions import check_password
+from functions import check_password, crop_center
 from tinydb import TinyDB, Query
 from livereload import Server
+from PIL import Image
 
 chats = TinyDB('chats_db.json')
 app = Flask(__name__)
@@ -163,6 +164,9 @@ def add_advertisement():
             path = f'static/users_data/{current_user.email}/files/{filename}'
             file.save(path)
             advertisement.file = f'users_data/{current_user.email}/files/{filename}'
+            image = Image.open(path)
+            im_crop = crop_center(image)
+            im_crop.save(path, quality=95)
         else:
             advertisement.file = 'img/img.png'
         current_user.advertisement.append(advertisement)
@@ -251,6 +255,9 @@ def edit_advertisement(id):
                 path = f'static/users_data/{current_user.email}/files/{filename}'
                 file.save(path)
                 advertisement.file = f'users_data/{current_user.email}/files/{filename}'
+                image = Image.open(path)
+                im_crop = crop_center(image)
+                im_crop.save(path, quality=95)
             db_sess.commit()
             return redirect('/')
         else:
@@ -319,13 +326,16 @@ def edit_user():
             user.name = form.name.data
             user.about = form.about.data
             file = form.photo.data
-            print(file)
             if file:
                 filename = werkzeug.utils.secure_filename(file.filename)
                 path = f'static/users_data/{user.email}/avatar/{filename}'
                 file.save(path)
                 user.avatar = f'users_data/{user.email}/avatar/{filename}'
-            else:
+                image = Image.open(path)
+                im_crop = crop_center(image, 700, 700)
+                im_crop.save(path, quality=95)
+
+            elif not user.avatar:
                 user.avatar = 'https://bootdey.com/img/Content/user_1.jpg'
             db_sess.commit()
             return redirect('/')
