@@ -42,15 +42,19 @@ def main():
 def index():
     form = SearchForm()
     if form.validate_on_submit():
-        return redirect(f'/search/{form.label.data}')
+        return redirect(f'/search/{form.search.data}')
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
         advertisement = db_sess.query(Advertisement).filter(
             (Advertisement.user == current_user) | (Advertisement.is_private != True))
     else:
         advertisement = db_sess.query(Advertisement).filter(Advertisement.is_private != True)
-    return render_template("index.html", advertisement=advertisement, url_for=url_for, form=form, search={'title': '',
-                                                                                                          'author': ''})
+    return render_template("index.html", advertisement=advertisement,
+                           url_for=url_for,
+                           form=form,
+                           search={'title': '',
+                                   'author': ''},
+                           url='/')
 
 
 @app.route("/search/<string:searchWord>", methods=['GET', 'POST'])
@@ -66,8 +70,8 @@ def search(searchWord):
     if request.method == 'GET':
         text = searchWord
     if form.validate_on_submit():
-        print(f'Поиск: {form.label.data}')
-        text = form.label.data
+        print(f'Поиск: {form.search.data}')
+        text = form.search.data
     if '%' in text:
         emailIndex = text.index('%') + 1
         emailEndIndex = text[emailIndex:].find(' ') + len(text[:emailIndex])
@@ -79,7 +83,12 @@ def search(searchWord):
     else:
         search = {'title': text.lower(), 'author': ''}
     print('Поиск: ', search)
-    return render_template('index.html', form=form, url_for=url_for, search=search, advertisement=advertisement)
+    return render_template('index.html',
+                           form=form,
+                           url_for=url_for,
+                           search=search,
+                           advertisement=advertisement,
+                           url=f'/search/{searchWord}')
 
 
 @app.route("/confirmation")
@@ -124,7 +133,10 @@ def reqister():
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
-    return render_template('register.html', title='Регистрация', form=form)
+    return render_template('register.html',
+                           title='Регистрация',
+                           form=form,
+                           url='/register')
 
 
 @login_manager.user_loader
@@ -145,7 +157,10 @@ def login():
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)
-    return render_template('login.html', title='Авторизация', form=form)
+    return render_template('login.html',
+                           title='Авторизация',
+                           form=form,
+                           url='/login')
 
 
 @app.route('/advertisement', methods=['GET', 'POST'])
@@ -173,8 +188,10 @@ def add_advertisement():
         db_sess.merge(current_user)
         db_sess.commit()
         return redirect('/')
-    return render_template('advertisement.html', title='Добавление новости',
-                           form=form)
+    return render_template('advertisement.html',
+                           title='Добавление новости',
+                           form=form,
+                           url='/advertisement')
 
 
 @app.route('/advertisement/<int:advertisement_id>', methods=['GET', 'POST'])
@@ -293,7 +310,7 @@ def logout():
 def settings():
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == current_user.id).first()
-    return render_template('settings.html', user=user)
+    return render_template('settings.html', user=user, url='/settings')
 
 
 @app.route('/settings/edit', methods=['GET', 'POST'])
@@ -338,12 +355,13 @@ def edit_user():
             elif not user.avatar:
                 user.avatar = 'https://bootdey.com/img/Content/user_1.jpg'
             db_sess.commit()
-            return redirect('/')
+            return redirect('//settings/edit')
         else:
             abort(404)
     return render_template('register.html',
                            title='Редактирование профиля',
-                           form=form)
+                           form=form,
+                           url='')
 
 
 @app.route('/settings/delete', methods=['GET', 'POST'])
