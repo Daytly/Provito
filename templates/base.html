@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -32,10 +32,22 @@
           </div>
           {% endif %}
         </div>
-        <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Поиск</button>
-        </form>
+         {% if url == '/' or '/search' in url %}
+            <form method="post" class="d-flex" role="search" enctype="multipart/form-data" action="">
+                {{ form.hidden_tag() }}
+                {{ form.search(class="form-control") }}
+                {{form.submit(type="submit", class="btn btn-primary")}}
+                <!--
+                <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Поиск</button>
+                -->
+                {% for error in form.search.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </form>
+            {% endif %}
       </div>
     </nav>
 </header>
