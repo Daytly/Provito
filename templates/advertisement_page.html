@@ -17,12 +17,14 @@
         <br>
         {{advertisement.user.email}}
     </div>
-    {% if current_user.id != advertisement.user.id %}
-    <div class="col-2 center">
-        <a href="/chat/{{ advertisement.user.id }}" class="btn btn-success">
-            Чат с пользователем
-        </a>
-    </div>
+    {% if current_user.is_authenticated %}
+        {% if current_user.id != advertisement.user.id %}
+        <div class="col-2 center">
+            <a href="/chat/{{ advertisement.user.id }}" class="btn btn-success">
+                Чат с пользователем
+            </a>
+        </div>
+        {% endif %}
     {% endif %}
 </div>
 {% endblock %}
