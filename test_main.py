@@ -120,15 +120,20 @@ def register():
         user.email = form.email.data
         user.about = form.about.data
         new_user(user)
-        print(file)
         if file:
-            filename = werkzeug.utils.secure_filename(file.filename)
-            path = f'static/users_data/{user.email}/avatar/{filename}'
-            file.save(path)
-            user.avatar = f'users_data/{user.email}/avatar/{filename}'
-            image = Image.open(path)
-            im_crop = crop_center(image)
-            im_crop.save(path, quality=95)
+            if file != 'None':
+                filename = werkzeug.utils.secure_filename(file.filename)
+                path = f'static/users_data/{user.email}/avatar/{filename}'
+                file.save(path)
+                user.avatar = f'users_data/{user.email}/avatar/{filename}'
+                image = Image.open(path)
+                im_crop = crop_center(image)
+                im_crop.save(path, quality=95)
+            else:
+                path = f'static/users_data/{user.email}/avatar/main.jpeg'
+                image = Image.open('UsersImages\\test\\main.jpeg')
+                image.save(path, quality=95)
+                user.avatar = f'users_data/{user.email}/avatar/main.jpeg'
         else:
             user.avatar = 'https://bootdey.com/img/Content/user_1.jpg'
         user.set_password(form.password.data)
@@ -237,7 +242,7 @@ def WrIte_MeSSage(_id):
     if request.method == 'POST':
         if form.message.data:
             table.insert({'id': current_user.id, 'text': form.message.data, 'time':
-                datetime.datetime.now().strftime('"%m-%d-%Y %H:%M"')})
+                datetime.datetime.now().strftime('%m-%d-%Y %H:%M')})
         return redirect(f'/chat/{_id}')
     return render_template('chat_room.html', messages=table.all(), cur=current_user,
                            other=other, form=form, previous=previous, id=_id)
@@ -332,12 +337,12 @@ def edit_user():
         user = db_sess.query(User).filter(User.id == current_user.id, ).first()
         user1 = db_sess.query(User).filter(User.email == form.email.data).first()
         if user1.id != current_user.id:
-            return render_template('register.html', title='Редактирование', form=form,
+            return render_template('register.html', title='Редактирование профиля', form=form,
                                    message="Такой пользователь уже есть")
         try:
             check_password(form.password.data, form.password_again.data)
         except Exception as error:
-            return render_template('register.html', title='Регистрация', form=form,
+            return render_template('register.html', title='Редактирование профиля', form=form,
                                    message=error.__str__())
         if user:
             user.email = form.email.data
@@ -346,24 +351,16 @@ def edit_user():
             user.about = form.about.data
             file = form.photo.data
             if file:
-                filename = werkzeug.utils.secure_filename(file.filename)
-                path = f'static/users_data/{user.email}/avatar/{filename}'
-                if user.avatar:
-                    del_path = 'static/' + user.avatar
-                    os.remove(del_path)
-                file.save(path)
-                user.avatar = f'users_data/{user.email}/avatar/{filename}'
-                image = Image.open(path)
-                im_crop = crop_center(image)
-                im_crop.save(path, quality=95)
+                if file != 'None':
+                    filename = werkzeug.utils.secure_filename(file.filename)
+                    path = f'static/users_data/{user.email}/avatar/{filename}'
+                    file.save(path)
+                    user.avatar = f'users_data/{user.email}/avatar/{filename}'
+                    image = Image.open(path)
+                    im_crop = crop_center(image)
+                    im_crop.save(path, quality=95)
                 db_sess.commit()
-                return redirect('/settings')
-            elif not user.avatar:
-                user.avatar = 'https://bootdey.com/img/Content/user_1.jpg'
-                db_sess.commit()
-                return redirect('/settings')
-            else:
-                return redirect('//settings/edit')
+            return redirect('/settings')
         else:
             abort(404)
     return render_template('register.html',

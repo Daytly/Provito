@@ -10,14 +10,13 @@
         <div class="row">
             <div class="col-md-4 bg-white ">
                 <div class=" row border-bottom padding-sm" style="height: 40px;">
-                    Предыдущие чаты
+                    Member
                 </div>
-
-                <!-- Короч это активные чаты -->
                 <ul class="friend-list">
                     {% for user in previous %}
-                    <li class="active bounceInDown">
+                    <li>
                         <a href="/chat/{{user.id}}" class="clearfix">
+                            <img src="/static/{{ user.avatar }}" alt class="img-circle">
                             <div class="friend-name">
                                 <strong>{{ user.name }}</strong>
                             </div>
@@ -26,7 +25,6 @@
                     {% endfor %}
                 </ul>
             </div>
-
             <!-- ТУт конец активных чатов -->
             {% if id != 0 %}
             <div class="col-md-8 bg-white">
@@ -37,7 +35,7 @@
                         {% if message['id'] == other.id %}
                         <li class="left clearfix">
 <span class="chat-img pull-left">
-<img src="https://bootdey.com/img/Content/user_3.jpg" alt="User Avatar">
+<img src="/static/{{ other.avatar }}" alt="User Avatar">
 </span>
                             <div class="chat-body clearfix">
                                 <div class="header">
@@ -52,11 +50,13 @@
                         {% else %}
                         <li class="right clearfix">
 <span class="chat-img pull-right">
-<img src="https://bootdey.com/img/Content/user_1.jpg" alt="User Avatar">
+<img src="/static/{{ cur.avatar }}" alt="User Avatar">
 </span>
                             <div class="chat-body clearfix">
                                 <div class="header">
                                     <strong class="primary-font">{{cur.name}}</strong>
+                                    <small class="pull-right text-muted"><i class="fa fa-clock-o">
+                                    </i> {{message.time}}</small>
                                 </div>
                                 <p>
                                     {{message['text']}}
@@ -84,6 +84,8 @@
     <script type="text/javascript">
   var block = document.getElementById("chelik");
   block.scrollTop = block.scrollHeight;
+
+
 
     </script>
 </form>
