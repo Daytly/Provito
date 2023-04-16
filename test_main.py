@@ -126,7 +126,7 @@ def register():
             filename = werkzeug.utils.secure_filename(file.filename)
             path = f'static/users_data/{user.email}/avatar/{filename}'
             file.save(path)
-            user.avatar = f'users_data/{user.email}/avatar/{filename}'
+            user.avatar = f'static/users_data/{user.email}/avatar/{filename}'
             image = Image.open(path)
             im_crop = crop_center(image)
             im_crop.save(path, quality=95)
@@ -360,7 +360,7 @@ def edit_user():
                     del_path = 'static/' + user.avatar
                     os.remove(del_path)
                 file.save(path)
-                user.avatar = f'users_data/{user.email}/avatar/{filename}'
+                user.avatar = f'static/users_data/{user.email}/avatar/{filename}'
                 image = Image.open(path)
                 im_crop = crop_center(image)
                 im_crop.save(path, quality=95)
