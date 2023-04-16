@@ -180,6 +180,7 @@ def add_advertisement():
         file = form.photo.data
         if file:
             filename = werkzeug.utils.secure_filename(file.filename)
+            print(filename)
             path = f'static/users_data/{current_user.email}/files/{filename}'
             file.save(path)
             advertisement.file = f'users_data/{current_user.email}/files/{filename}'

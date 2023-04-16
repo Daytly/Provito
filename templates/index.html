@@ -14,10 +14,11 @@
                 <img src="{{url_for('static', filename=item.file)}}" alt="В этом виноват Рома" class="w-100 h-100">
             </div>
             <div class="col-8">
-                <h2 style="cursor: pointer;" onclick="location.href='/advertisement/{{item.id}}';">{{item.title}}</h2>
+                <h2 style="cursor: pointer; margin-top:0px" onclick="location.href='/advertisement/{{item.id}}';">{{item.title}}</h2>
+                <p>{{item.content}}</p>
                 Автор - {{item.user.name}}, Дата написания - {{item.created_date.strftime("%m-%d-%Y %H:%M")}}
                 <div>
-                    {{item.file.split('/')[1]}}
+                    почта:  {{item.file.split('/')[1]}}
                 </div>
                 {% if current_user.is_authenticated and current_user == item.user %}
                 <div>
