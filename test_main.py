@@ -130,10 +130,10 @@ def register():
                 im_crop = crop_center(image)
                 im_crop.save(path, quality=95)
             else:
-                path = f'static/users_data/{user.email}/avatar/main.jpeg'
-                image = Image.open('UsersImages\\test\\main.jpeg')
+                path = f'static/users_data/{user.email}/avatar/default_avatar.png'
+                image = Image.open('static/img/default_avatar.png')
                 image.save(path, quality=95)
-                user.avatar = f'users_data/{user.email}/avatar/main.jpeg'
+                user.avatar = f'users_data/{user.email}/avatar/default_avatar.png'
         else:
             user.avatar = 'https://bootdey.com/img/Content/user_1.jpg'
         user.set_password(form.password.data)
