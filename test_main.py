@@ -1,3 +1,4 @@
+
 import datetime
 import os
 import werkzeug.utils
@@ -102,18 +103,18 @@ def confirmation(id):
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def reqister():
+def register():
     form = RegisterForm()
     if request.method == 'POST':
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first():
             return render_template('register.html', title='Регистрация', form=form,
-                                   message="Такой пользователь уже есть")
+                                   message="Такой пользователь уже есть", url='/register')
         try:
             check_password(form.password.data, form.password_again.data)
         except Exception as error:
             return render_template('register.html', title='Регистрация', form=form,
-                                   message=error.__str__())
+                                   message=error.__str__(), url='/register')
         user = User()
         file = form.photo.data
         user.name = form.name.data
@@ -126,6 +127,9 @@ def reqister():
             path = f'static/users_data/{user.email}/avatar/{filename}'
             file.save(path)
             user.avatar = f'users_data/{user.email}/avatar/{filename}'
+            image = Image.open(path)
+            im_crop = crop_center(image)
+            im_crop.save(path, quality=95)
         else:
             user.avatar = 'https://bootdey.com/img/Content/user_1.jpg'
         user.set_password(form.password.data)
@@ -184,8 +188,9 @@ def add_advertisement():
             im_crop.save(path, quality=95)
         else:
             advertisement.file = 'img/img.png'
-        current_user.advertisement.append(advertisement)
-        db_sess.merge(current_user)
+        user = db_sess.query(User).filter(User.id == current_user.id).first()
+        user.advertisement.append(advertisement)
+        db_sess.merge(user)
         db_sess.commit()
         return redirect('/')
     return render_template('advertisement.html',
@@ -195,13 +200,11 @@ def add_advertisement():
 
 
 @app.route('/advertisement/<int:advertisement_id>', methods=['GET', 'POST'])
-@login_required
 def advertisement_page(advertisement_id):
     db_sess = db_session.create_session()
     advertisement = db_sess.query(Advertisement).filter(Advertisement.id == advertisement_id).first()
     if advertisement:
         return render_template('advertisement_page.html', advertisement=advertisement,
-                               current_user=current_user,
                                url_for=url_for)
     else:
         return redirect('/')
@@ -228,17 +231,24 @@ def WrIte_MeSSage(_id):
     else:
         table = chats.table(str(0))
         other = None
-    previous = [i.user_id1 if i.user_id1 != current_user.id else i.user_id2 for i
+    previous = [(i.user_id1, i.id) if i.user_id1 != current_user.id else (i.user_id2, i.id) for i
                 in sess.query(Chat).filter((Chat.user_id1 == current_user.id) |
                                            (Chat.user_id2 == current_user.id)).all()]
-    previous = [sess.query(User).filter(User.id == i).first() for i in previous]
+    lm = {}
+    for i in previous:
+        messages = chats.table(i[1])
+        for j in messages:
+            if j['id'] == i[0]:
+                lm[i[0]] = j['text']
+                break
+    previous = [sess.query(User).filter(User.id == i[0]).first() for i in previous]
     if request.method == 'POST':
         if form.message.data:
             table.insert({'id': current_user.id, 'text': form.message.data, 'time':
                 datetime.datetime.now().strftime('"%m-%d-%Y %H:%M"')})
         return redirect(f'/chat/{_id}')
     return render_template('chat_room.html', messages=table.all(), cur=current_user,
-                           other=other, form=form, previous=previous, id=_id)
+                           other=other, form=form, previous=previous, id=_id, lm=lm)
 
 
 @app.route('/advertisement/edit/<int:id>', methods=['GET', 'POST'])
@@ -346,16 +356,22 @@ def edit_user():
             if file:
                 filename = werkzeug.utils.secure_filename(file.filename)
                 path = f'static/users_data/{user.email}/avatar/{filename}'
+                if user.avatar:
+                    del_path = 'static/' + user.avatar
+                    os.remove(del_path)
                 file.save(path)
                 user.avatar = f'users_data/{user.email}/avatar/{filename}'
                 image = Image.open(path)
-                im_crop = crop_center(image, 700, 700)
+                im_crop = crop_center(image)
                 im_crop.save(path, quality=95)
-
+                db_sess.commit()
+                return redirect('/settings')
             elif not user.avatar:
                 user.avatar = 'https://bootdey.com/img/Content/user_1.jpg'
-            db_sess.commit()
-            return redirect('//settings/edit')
+                db_sess.commit()
+                return redirect('/settings')
+            else:
+                return redirect('//settings/edit')
         else:
             abort(404)
     return render_template('register.html',
@@ -367,9 +383,18 @@ def edit_user():
 @app.route('/settings/delete', methods=['GET', 'POST'])
 def delete_user():
     db_sess = db_session.create_session()
-    db_sess.delete(current_user)
+    for advertisement in current_user.advertisement:
+        ad = db_sess.query(Advertisement).filter(Advertisement.id == advertisement.id).first()
+        db_sess.delete(ad)
+    user = db_sess.query(User).filter(User.id == current_user.id).first()
+    db_sess.delete(user)
     db_sess.commit()
     return redirect('/')
+
+
+@app.route("/authors")
+def authors():
+    return render_template("authors.html", url='/authors')
 
 
 @app.errorhandler(404)
