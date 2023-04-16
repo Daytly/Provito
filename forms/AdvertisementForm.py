@@ -8,6 +8,6 @@ from wtforms.validators import DataRequired
 class AdvertisementForm(FlaskForm):
     title = StringField('Заголовок', validators=[DataRequired()])
     content = TextAreaField("Содержание")
-    is_private = BooleanField("Личное")
+    is_private = BooleanField("Скрыть от пользоваетлей")
     photo = FileField('Картинка', validators=[FileAllowed(['jpg', 'png'], 'Только картинки')])
     submit = SubmitField('Применить')

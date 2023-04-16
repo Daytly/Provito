@@ -16,9 +16,9 @@
                 <!-- Короч это активные чаты -->
                 <ul class="friend-list">
                     {% for user in previous %}
-                    <li class="active bounceInDown">
+                    <li class="">
                         <a href="/chat/{{user.id}}" class="clearfix">
-                            <img src="{{ user.avatar }}" alt="" class="img-circle">
+                            <img src="{{ url_for('static', filename=user.avatar[7:])}}" alt="avatar" class="img-circle">
                             <div class="friend-name">
                                 <strong>{{ user.name }}</strong>
                             </div>
@@ -39,7 +39,7 @@
                         {% if message['id'] == other.id %}
                         <li class="left clearfix">
 <span class="chat-img pull-left">
-<img src="{{ other.avatar }}" alt="User Avatar">
+<img src="{{ url_for('static', filename=other.avatar[7:])}}" alt="avatar">
 </span>
                             <div class="chat-body clearfix">
                                 <div class="header">
@@ -54,7 +54,7 @@
                         {% else %}
                         <li class="right clearfix">
 <span class="chat-img pull-right">
-<img src="{{ cur.avatar }}" alt="User Avatar">
+<img src="{{ url_for('static', filename=cur.avatar[7:])}}" alt="User Avatar">
 </span>
                             <div class="chat-body clearfix">
                                 <div class="header">

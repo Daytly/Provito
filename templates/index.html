@@ -18,7 +18,7 @@
                 <p>{{item.content}}</p>
                 Автор - {{item.user.name}}, Дата написания - {{item.created_date.strftime("%m-%d-%Y %H:%M")}}
                 <div>
-                    почта:  {{item.file.split('/')[1]}}
+                    Почта:  {{item.user.email}}
                 </div>
                 {% if current_user.is_authenticated and current_user == item.user %}
                 <div>

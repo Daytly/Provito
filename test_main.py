@@ -73,8 +73,9 @@ def search(searchWord):
     if form.validate_on_submit():
         print(f'Поиск: {form.search.data}')
         text = form.search.data
-    if '%' in text:
-        emailIndex = text.index('%') + 1
+    sp_char = '&'
+    if sp_char in text:
+        emailIndex = text.index(sp_char) + 1
         emailEndIndex = text[emailIndex:].find(' ') + len(text[:emailIndex])
         if emailEndIndex < len(text[:emailIndex]):
             emailEndIndex = len(text)
@@ -338,15 +339,16 @@ def edit_user():
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(User.id == current_user.id, ).first()
+        user = db_sess.query(User).filter(User.id == current_user.id).first()
         user1 = db_sess.query(User).filter(User.email == form.email.data).first()
-        if user1.id != current_user.id:
-            return render_template('register.html', title='Редактирование', form=form,
-                                   message="Такой пользователь уже есть")
+        if user1:
+            if user1.id != current_user.id:
+                return render_template('register.html', title='Редактирование профиля', form=form,
+                                       message="Такой пользователь уже есть")
         try:
             check_password(form.password.data, form.password_again.data)
         except Exception as error:
-            return render_template('register.html', title='Регистрация', form=form,
+            return render_template('register.html', title='Редактирование профиля', form=form,
                                    message=error.__str__())
         if user:
             user.email = form.email.data
@@ -358,21 +360,17 @@ def edit_user():
                 filename = werkzeug.utils.secure_filename(file.filename)
                 path = f'static/users_data/{user.email}/avatar/{filename}'
                 if user.avatar:
-                    del_path = 'static/' + user.avatar
+                    del_path = user.avatar
                     os.remove(del_path)
                 file.save(path)
                 user.avatar = f'static/users_data/{user.email}/avatar/{filename}'
                 image = Image.open(path)
                 im_crop = crop_center(image)
                 im_crop.save(path, quality=95)
-                db_sess.commit()
-                return redirect('/settings')
             elif not user.avatar:
                 user.avatar = 'https://bootdey.com/img/Content/user_1.jpg'
-                db_sess.commit()
-                return redirect('/settings')
-            else:
-                return redirect('//settings/edit')
+            db_sess.commit()
+            return redirect('/settings')
         else:
             abort(404)
     return render_template('register.html',
