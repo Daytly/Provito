@@ -384,6 +384,11 @@ def delete_user():
     return redirect('/')
 
 
+@app.route("/authors")
+def authors():
+    return render_template("authors.html", url='/authors')
+
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
