@@ -34,9 +34,9 @@ def main():
     api.add_resource(advertisement_resources.AdvertisementListResource, '/api/v2/advertisement')
     # для одного объекта
     api.add_resource(advertisement_resources.AdvertisementResource, '/api/v2/advertisement/<int:advertisement_id>')
-    # app.run()
-    server = Server(app.wsgi_app)
-    server.serve()
+    app.run()
+    #server = Server(app.wsgi_app)
+    #server.serve()
 
 
 @app.route("/", methods=['GET', 'POST'])

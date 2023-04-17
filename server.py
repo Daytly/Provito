@@ -34,9 +34,9 @@ def main():
     api.add_resource(advertisement_resources.AdvertisementListResource, '/api/v2/advertisement')
     # для одного объекта
     api.add_resource(advertisement_resources.AdvertisementResource, '/api/v2/advertisement/<int:advertisement_id>')
-    # app.run()
-    server = Server(app.wsgi_app)
-    server.serve()
+    app.run()
+    # server = Server(app.wsgi_app)
+    # server.serve()
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -121,7 +121,6 @@ def register():
         user.name = form.name.data
         user.email = form.email.data
         user.about = form.about.data
-        new_user(user)
         print(file)
         if file:
             filename = werkzeug.utils.secure_filename(file.filename)
@@ -137,6 +136,7 @@ def register():
         new_user(user)
         db_sess.add(user)
         db_sess.commit()
+        new_user(user)
         return redirect('/login')
     return render_template('register.html',
                            title='Регистрация',
@@ -181,9 +181,8 @@ def add_advertisement():
         file = form.photo.data
         if file:
             filename = werkzeug.utils.secure_filename(file.filename)
-            print(filename)
             path = f'static/users_data/{current_user.email}/files/{filename}'
-            file.save(path)
+            request.files['photo'].save(os.path.join(f'static/users_data/{current_user.email}/files/', filename))
             advertisement.file = f'users_data/{current_user.email}/files/{filename}'
             image = Image.open(path)
             im_crop = crop_center(image)
@@ -408,9 +407,9 @@ def bad_request(_):
 
 def new_user(user):
     try:
-        os.mkdir('static/users_data/' + user.email)
-        os.mkdir('static/users_data/' + user.email + '/files')
-        os.mkdir('static/users_data/' + user.email + '/avatar')
+        os.mkdir('static/users_data/' + str(user.id))
+        os.mkdir('static/users_data/' + str(user.id) + '/files')
+        os.mkdir('static/users_data/' + str(user.id) + '/avatar')
     except FileExistsError:
         pass
 
