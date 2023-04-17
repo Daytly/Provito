@@ -34,9 +34,9 @@ def main():
     api.add_resource(advertisement_resources.AdvertisementListResource, '/api/v2/advertisement')
     # для одного объекта
     api.add_resource(advertisement_resources.AdvertisementResource, '/api/v2/advertisement/<int:advertisement_id>')
-    app.run()
-    #server = Server(app.wsgi_app)
-    #server.serve()
+    # app.run()
+    server = Server(app.wsgi_app)
+    server.serve()
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -359,9 +359,6 @@ def edit_user():
             if file:
                 filename = werkzeug.utils.secure_filename(file.filename)
                 path = f'static/users_data/{user.email}/avatar/{filename}'
-                if user.avatar:
-                    del_path = user.avatar
-                    os.remove(del_path)
                 file.save(path)
                 user.avatar = f'static/users_data/{user.email}/avatar/{filename}'
                 image = Image.open(path)

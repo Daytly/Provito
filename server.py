@@ -121,22 +121,22 @@ def register():
         user.name = form.name.data
         user.email = form.email.data
         user.about = form.about.data
-        print(file)
-        if file:
-            filename = werkzeug.utils.secure_filename(file.filename)
-            path = f'static/users_data/{user.email}/avatar/{filename}'
-            file.save(path)
-            user.avatar = f'static/users_data/{user.email}/avatar/{filename}'
-            image = Image.open(path)
-            im_crop = crop_center(image)
-            im_crop.save(path, quality=95)
-        else:
-            user.avatar = 'https://bootdey.com/img/Content/user_1.jpg'
-        user.set_password(form.password.data)
-        new_user(user)
         db_sess.add(user)
         db_sess.commit()
         new_user(user)
+        if file:
+            filename = werkzeug.utils.secure_filename(file.filename)
+            user.avatar = f'static/users_data/{user.id}/avatar/{filename}'
+        else:
+            user.avatar = 'https://bootdey.com/img/Content/user_1.jpg'
+        user.set_password(form.password.data)
+        db_sess.commit()
+        if file:
+            path = f'static/users_data/{user.id}/avatar/{filename}'
+            file.save(path)
+            image = Image.open(path)
+            im_crop = crop_center(image)
+            im_crop.save(path, quality=95)
         return redirect('/login')
     return render_template('register.html',
                            title='Регистрация',
@@ -179,11 +179,15 @@ def add_advertisement():
         advertisement.content = form.content.data
         advertisement.is_private = form.is_private.data
         file = form.photo.data
+        user = db_sess.query(User).filter(User.id == current_user.id).first()
+        user.advertisement.append(advertisement)
+        db_sess.merge(user)
+        db_sess.commit()
         if file:
             filename = werkzeug.utils.secure_filename(file.filename)
-            path = f'static/users_data/{current_user.email}/files/{filename}'
-            request.files['photo'].save(os.path.join(f'static/users_data/{current_user.email}/files/', filename))
-            advertisement.file = f'users_data/{current_user.email}/files/{filename}'
+            path = f'static/users_data/{current_user.id}/files/{filename}'
+            file.save(path)
+            advertisement.file = f'users_data/{current_user.id}/files/{filename}'
             image = Image.open(path)
             im_crop = crop_center(image)
             im_crop.save(path, quality=95)
@@ -280,9 +284,9 @@ def edit_advertisement(id):
             file = form.photo.data
             if file:
                 filename = werkzeug.utils.secure_filename(file.filename)
-                path = f'static/users_data/{current_user.email}/files/{filename}'
+                path = f'static/users_data/{current_user.id}/files/{filename}'
                 file.save(path)
-                advertisement.file = f'users_data/{current_user.email}/files/{filename}'
+                advertisement.file = f'users_data/{current_user.id}/files/{filename}'
                 image = Image.open(path)
                 im_crop = crop_center(image)
                 im_crop.save(path, quality=95)
