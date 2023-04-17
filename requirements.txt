@@ -1,5 +1,11 @@
 SQLAlchemy~=1.4.47
-Werkzeug~=2.2.3
 Flask~=2.2.3
 WTForms~=3.0.1
 pillow~=9.5.0
+flask_login
+flask_restful
+tinydb
+Werkzeug~=2.2.3
+tinydb~=4.7.1
+livereload~=2.6.3
+django-livereload~=1.7

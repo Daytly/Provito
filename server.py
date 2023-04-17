@@ -15,7 +15,7 @@ from forms.SearchForm import SearchForm
 from forms.ChatForm import ChatForm
 from functions import check_password, crop_center
 from tinydb import TinyDB, Query
-from livereload import Server
+from livereload.server import Server
 from PIL import Image
 
 chats = TinyDB('chats_db.json')
